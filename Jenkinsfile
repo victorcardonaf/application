@@ -14,6 +14,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    checkout scm
                     app = docker.build(DOCKER_IMAGE_NAME)
                     }
                 }
@@ -29,12 +30,8 @@ pipeline {
               }
             }
         stage('Deploy') {
-            when {
-                branch 'master'
-            }
             steps {
-                script {
-                    app.run("-d -p 3000:3000 --name image_build_${env.BUILD_NUMBER} -i -t")
+                    sh "docker run -d -p 3000:3000 --name alpine_timeoff DOCKER_IMAGE_NAME"
                 }
                 
             }
