@@ -1,130 +1,119 @@
 
-# TimeOff.Management
+# Ansible and Jenkins Implementation
 
-Web application for managing employee absences.
+There are several processes that are required to deploy the app correctly. The automation tool used to develop this activity is ansible. We need an ansible controller to ensure that the playbook developed can be carried out. Please follow the next steps:
 
-[![Stories in Ready](https://badge.waffle.io/timeoff-management/application.png?label=ready&title=Ready)](https://waffle.io/timeoff-management/application)
+1. Run a docker container with the ansible controller
+2. Deploy the playbook from the ansible controller
+3. Connect to Jenkins Web Interface to create credentials and the pipeline job
+4. Check the app running accessing from the web browser
 
-<a href="https://travis-ci.org/timeoff-management/application"><img align="right" src="https://travis-ci.org/timeoff-management/application.svg?branch=master" alt="Build status" /></a>
+Requirements:
 
-## Features
+Install Docker on the baseline OS (You can use a Windows Machine, MACOS or Linux OS. Please follow the instructions)
+- https://docs.docker.com/install/linux/docker-ce/ubuntu/
+- https://docs.docker.com/docker-for-mac/install/
+- https://docs.docker.com/docker-for-windows/install/
 
-**Multiple views of staff absences**
+**Run a docker container with the ansible controller**
 
-Calendar view, Team view, or Just plain list.
+Clone repo in the local machine.
 
-**Tune application to fit into your company policy**
-
-Add custom absence types: Sickness, Maternity, Working from home, Birthday etc. Define if each uses vacation allowance.
-
-Optionally limit the amount of days employees can take for each Leave type. E.g. no more than 10 Sick days per year.
-
-Setup public holidays as well as company specific days off.
-
-Group employees by departments: bring your organisational structure, set the supervisor for every department.
-
-Customisable working schedule for company and individuals.
-
-**Third Party Calendar Integration**
-
-Broadcast employee whereabouts into external calendar providers: MS Outlook, Google Calendar, and iCal.
-
-Create calendar feeds for individuals, departments or entire company.
-
-**Three Steps Workflow**
-
-Employee requests time off or revokes existing one.
-
-Supervisor gets email notification and decides about upcoming employee absence.
-
-Absence is accounted. Peers are informed via team view or calendar feeds.
-
-**Access control**
-
-There are following types of users: employees, supervisors, and administrators.
-
-Optional LDAP authentication: configure application to use your LDAP server for user authentication.
-
-**Seamless data migration betweeen different installations**
-
-User friendly and simple workflow for data migration between different TimeOff.Management installations.
-
-Admin user can download the entire company data as a single JSON file and then restore the account at a different installation by simply uploading the JSON.
-
-**Works on mobile phones**
-
-The most used customer paths are mobile friendly:
-
-* employee is able to request new leave from mobile device
-
-* supervisor is able to record decision from the mobile as well.
-
-**Lots of other little things that would make life easier**
-
-Manually adjust employee allowances
-e.g. employee has extra day in lieu.
-
-Upon creation employee receives pro-rated vacation allowance, depending on start date.
-
-Email notification to all involved parties.
-
-Optionally allow employees to see the time off information of entire company regardless of department structure.
-
-## Screenshots
-
-![TimeOff.Management Screenshot](https://raw.githubusercontent.com/timeoff-management/application/master/public/img/readme_screenshot.png)
-
-## Installation
-
-### Cloud hosting
-
-Visit http://timeoff.management/
-
-Create company account and use cloud based version.
-
-### Self hosting
-
-Install TimeOff.Management application within your infrastructure:
-
-(make sure you have Node.js (>=4.0.0) and SQLite installed)
-
-```bash
-git clone https://github.com/timeoff-management/application.git timeoff-management
-cd timeoff-management
-npm install
-npm start
+Go to personal_project/ansible-base-build folder. Execute the next command:
 ```
-Open http://localhost:3000/ in your browser.
-
-## Run tests
-
-We have quite a wide test coverage, to make sure that the main user paths work as expected.
-
-Please run them frequently while developing the project.
-
-(make sure you have [PhantomJS](http://phantomjs.org/download.html) installed in path)
-
-```bash
-npm test
+docker build -t centos-ansible .
+```
+After the building process, run the container:
+```
+docker run  --privileged  -v /sys/fs/cgroup:/sys/fs/cgroup --cap-add=SYS_ADMIN --cap-add=NET_ADMIN --name=centos-ansible -v "folder-where-you-clone"/personal_project:/media -dti centos-ansible
+```
+Go inside from the container:
+```
+docker exec -ti docker-ansible /bin/bash
 ```
 
-(make sure that application with default settings is up and running)
+**Deploy the playbook from the ansible controller**
 
-Any bug fixes or enhancements should have good test coverage to get them into "master" branch.
-
-## Updating existing instance with new code
-
-In case one needs to patch existing instance of TimeOff.Managenent application with new version:
-
-```bash
-git fetch
-git pull origin master
-npm install
-npm run-script db-update
-npm start
+Inside from the container, the first thing that is required is to modify the export_aws_variables.sh file providing the access keys to deploy resources in AWS.
+```
+#!/bin/bash
+export AWS_REGION=us-east-1
+export EC2_ACCESS_KEY=xxxxxxx
+export EC2_SECRET_KEY=xxxxxxxxxxxxxxxxxxxxxx
 ```
 
-## Feedback
+After modifying the file, execute it:
+``` ./export_aws_variables.sh
+```
+Verify with the env command if the variables were configured correctly:
+```
+env
+```
+Now inside from the container, execute:
+```
+ansible-playbook -i inventory/hosts provision_aws.yml
+```
 
-Please report any issues or feedback to <a href="https://twitter.com/FreeTimeOffApp">twitter</a> or Email: pavlo at timeoff.management
+This playbook will deploy resources in AWS. It will install a VPC inside from Virginia region and an EC2 t2.medium instance. In the instance will be installed Java, Docker and Jenkins. 
+
+
+**Connect to Jenkins Web Interface to create credentials and the pipeline job**
+
+The Jenkins public ip can be taken from the inventory/hosts file. You can see the existing value instead of the "jenkins-ip" value. This value is replaced when jenkins is deployed. 
+```
+[local]
+localhost ansible_connection=local
+
+[jenkins]
+jenkins-ip ansible_user=ec2-user become=true ansible_ssh_private_key_file=/media/keys/keypair.pem
+```
+To connect to the Jenkins Server, open a web browser using 8080 port and http protocol:
+```
+http://jenkins-ip:8080
+username: admin
+password: admin
+```
+
+**Configure dockerhub Credentials**
+
+Go to Credentials -> Add Credentials -> Configure username, password, ID and Description
+```
+username: "username used in dockerhub"
+password: "password used in dockerhub"
+ID: dockerhub -> Variable used in Jenkinsfile
+```
+**NOTE: Please use the same value to ID. This value is used in the Jenkinsfile**
+
+
+**Create the pipeline job**
+
+New Item -> Choose pipeline project and define a job name. Define the next parameters:
+
+```
+Build Triggers Section
+Check Poll SCM and put in the schedule * * * * * to check the repo each minute.
+```
+
+```
+Pipeline Section
+In definition choose Pipeline script from SCM
+In SCM choose Git
+```
+
+```
+Repositories Section
+Repository URL: https://github.com/victorcardonaf/application.git
+```
+
+```
+Script Path Section
+Ensure that Jenkinsfile is written there
+```
+
+Save Changes.The pipeline job is ready.
+
+**Check the app running accessing from the web browser**
+
+Open http://jenkins-ip:3000/ in your browser after the pipeline is executed correctly.
+
 
