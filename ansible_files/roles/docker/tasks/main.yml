@@ -1,0 +1,27 @@
+---
+- name: update repo
+  become: true
+  yum: 
+    name: "*"
+    state: latest
+
+- name: install docker
+  become: true
+  shell: |
+    yum install -y docker
+
+- name: add ec2-user to docker
+  become: true
+  shell: |
+    usermod -aG docker ec2-user
+
+- name: enable_service
+  become: yes
+  service:
+    name: docker
+    enabled: yes
+
+- name: Start_docker
+  become: yes
+  shell: |
+    systemctl start docker

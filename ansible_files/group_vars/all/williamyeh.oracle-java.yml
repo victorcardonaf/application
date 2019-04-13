@@ -1,0 +1,6 @@
+---
+java_version: 8
+java_subversion: 172
+java_download_from_oracle: true
+java_download_path: /tmp
+
