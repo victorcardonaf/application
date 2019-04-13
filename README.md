@@ -18,14 +18,17 @@ Install Docker on the baseline OS (You can use a Windows Machine, MACOS or Linux
 **Run a docker container with the ansible controller**
 
 Clone repo in the local machine.
-
-Go to personal_project/ansible-base-build folder. Execute the next command:
 ```
-docker build -t centos-ansible .
+git clone git@github.com:victorcardonaf/application.git ansible-deployment
+cd ansible-deployment
+```
+Build the ansible-controller docker image:
+```
+docker build -t centos-ansible ansible-base-build/
 ```
 After the building process, run the container:
 ```
-docker run  --privileged  -v /sys/fs/cgroup:/sys/fs/cgroup --cap-add=SYS_ADMIN --cap-add=NET_ADMIN --name=centos-ansible -v personal_project:/media -dti centos-ansible
+docker run  --privileged  -v /sys/fs/cgroup:/sys/fs/cgroup --cap-add=SYS_ADMIN --cap-add=NET_ADMIN --name=centos-ansible -v $(pwd)/personal_project:/media -dti centos-ansible
 ```
 Go inside from the container:
 ```
@@ -114,6 +117,9 @@ Save Changes.The pipeline job is ready.
 
 **Check the app running accessing from the web browser**
 
-Open http://jenkins-ip:3000/ in your browser after the pipeline is executed correctly.
+The execution of the pipeline shows you how to access to the app from the web browser according to the execution process:
+```
+http://jenkins-ip:3004
+```
 
 
