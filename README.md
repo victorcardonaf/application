@@ -25,11 +25,11 @@ docker build -t centos-ansible .
 ```
 After the building process, run the container:
 ```
-docker run  --privileged  -v /sys/fs/cgroup:/sys/fs/cgroup --cap-add=SYS_ADMIN --cap-add=NET_ADMIN --name=centos-ansible -v "folder-where-you-clone"/personal_project:/media -dti centos-ansible
+docker run  --privileged  -v /sys/fs/cgroup:/sys/fs/cgroup --cap-add=SYS_ADMIN --cap-add=NET_ADMIN --name=centos-ansible -v personal_project:/media -dti centos-ansible
 ```
 Go inside from the container:
 ```
-docker exec -ti docker-ansible /bin/bash
+docker exec -ti centos-ansible /bin/bash
 ```
 
 **Deploy the playbook from the ansible controller**
