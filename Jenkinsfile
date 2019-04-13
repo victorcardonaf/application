@@ -29,14 +29,13 @@ pipeline {
             }
         stage('Deploy') {
             steps {
-                    sh "docker run --stop-timeout 80 --stop-signal 80 -d -p 300${env.BUILD_NUMBER}:3000 --name test-${env.BUILD_NUMBER} victorcardonaf/test-application"
+                    sh "docker run -d -p 300${env.BUILD_NUMBER}:3000 --name test-${env.BUILD_NUMBER} victorcardonaf/test-application"
                 }
                 
             }
-        stage('Cleanup') {
+        stage('Test') {
             steps {
-                    sh "docker stop test-${env.BUILD_NUMBER}"
-                    sh "docker rm test-${env.BUILD_NUMBER}"
+                    echo "open http://jenkins-ip:300${env.BUILD_NUMBER}"
 
                 }
                 
