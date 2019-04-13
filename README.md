@@ -89,27 +89,31 @@ ID: dockerhub -> Variable used in Jenkinsfile
 
 New Item -> Choose pipeline project and define a job name. Define the next parameters:
 
-```Build Triggers Section
+```
+Build Triggers Section
 Check Poll SCM and put in the schedule * * * * * to check the repo each minute.
 ```
 
-```Pipeline Section
+```
+Pipeline Section
 In definition choose Pipeline script from SCM
 In SCM choose Git
 ```
 
-```Repositories Section
+```
+Repositories Section
 Repository URL: https://github.com/victorcardonaf/application.git
 ```
 
-```Script Path Section
-Jenkinsfile
+```
+Script Path Section
+Ensure that Jenkinsfile is written there
 ```
 
 Save Changes.The pipeline job is ready.
 
 **Check the app running accessing from the web browser**
 
-Open http://jenkins-ip:3000/ in your browser after the pipeline 
+Open http://jenkins-ip:3000/ in your browser after the pipeline is executed correctly.
 
 
