@@ -46,7 +46,8 @@ export EC2_SECRET_KEY=xxxxxxxxxxxxxxxxxxxxxx
 ```
 
 After modifying the file, execute it:
-``` ./export_aws_variables.sh
+``` 
+./export_aws_variables.sh
 ```
 Verify with the env command if the variables were configured correctly:
 ```
