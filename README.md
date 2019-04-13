@@ -46,7 +46,8 @@ export EC2_SECRET_KEY=xxxxxxxxxxxxxxxxxxxxxx
 ```
 
 After modifying the file, execute it:
-``` ./export_aws_variables.sh
+``` 
+./export_aws_variables.sh
 ```
 Verify with the env command if the variables were configured correctly:
 ```
@@ -62,13 +63,12 @@ This playbook will deploy resources in AWS. It will install a VPC inside from Vi
 
 **Connect to Jenkins Web Interface to create credentials and the pipeline job**
 
-The Jenkins public ip can be taken from the inventory/hosts file. You can see the existing value instead of the "jenkins-ip" value. This value is replaced when jenkins is deployed. 
+The Jenkins public ip can be taken from the jenkins_ip.txt file. You can see the existing value below from [jenkins]  value. This value is replaced when jenkins is deployed. 
 ```
-[local]
-localhost ansible_connection=local
-
+example:
 [jenkins]
-jenkins-ip ansible_user=ec2-user become=true ansible_ssh_private_key_file=/media/keys/keypair.pem
+3.80.142.181
+
 ```
 To connect to the Jenkins Server, open a web browser using 8080 port and http protocol:
 ```
@@ -100,7 +100,7 @@ Check Poll SCM and put in the schedule * * * * * to check the repo each minute.
 ```
 Pipeline Section
 In definition choose Pipeline script from SCM
-In SCM choose Git
+In SCM choose git
 ```
 
 ```
@@ -110,10 +110,10 @@ Repository URL: https://github.com/victorcardonaf/application.git
 
 ```
 Script Path Section
-Ensure that Jenkinsfile is written there
+Ensure that Jenkinsfile appears here
 ```
 
-Save Changes.The pipeline job is ready.
+Save Changes.The pipeline job is ready. Jenkins is now configured to deploy the app each time that a new commit occurs.
 
 **Check the app running accessing from the web browser**
 
