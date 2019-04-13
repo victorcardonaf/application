@@ -30,7 +30,7 @@ pipeline {
             }
         stage('Deploy') {
             steps {
-                    sh "docker run -d -p 3000:3000 --name alpine_timeoff DOCKER_IMAGE_NAME"
+                    sh "docker run -d -p 3000:3000 --name alpine_timeoff victorcardonaf/test-application"
                 }
                 
             }
