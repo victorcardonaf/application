@@ -38,11 +38,12 @@
     ansible_ssh_private_key_file: "{{ playbook_dir }}/keys/keypair.pem"
     become: true
     
-# - name: Add new IP to the hosts
-#   lineinfile:
-#     dest: "{{ playbook_dir }}/inventory/jenkins"
-#     regexp: "^(.+)$"
-#     line: "{{ ec2_ip }} ansible_user=ec2-user become=true ansible_ssh_private_key_file={{ playbook_dir }}/keys/keypair.pem"
+- name: Add new Jenkins IP to jenkins_ip file
+  lineinfile:
+    dest: "{{ playbook_dir }}/jenkins_ip.txt"
+    regexp: "^(.+)$"
+    insertafter: '^\[jenkins-ip\]'
+    line: "{{ ec2_ip }}"
 
 - name: Wait 300 seconds for port 22 to become open
   wait_for:
