@@ -1,32 +1,18 @@
 ---
-- name: Provision AWS Instances
-  become: true
-  hosts: localhost
-  roles:
-    - { role: provision-vpc }
-    - { role: provision-ec2 }
+# - name: Provision AWS Instances
+#   become: true
+#   hosts: localhost
+#   roles:
+#     - { role: provision-vpc }
+#     - { role: provision-ec2 }
 
 - name: Provision EC2 instance
   become: true
   hosts: jenkins
-#   vars:
-#     jenkins_version: "2.73.1"
-#     jenkins_url: http://jenkins.example.com
-#     jenkins_port: 80
-#     jenkins_install_via: "yum"
-#     jenkins_jobs:
-#         - "my-first-job"
-#         - "another-awesome-job"
-#     jenkins_include_secrets: true
-#     jenkins_include_custom_files: true
-#     jenkins_custom_files:
-#       - src: "jenkins.plugins.openstack.compute.UserDataConfig.xml"
-#         dest: "jenkins.plugins.openstack.compute.UserDataConfig.xml"
-#     jenkins_custom_plugins:
-#         - "openstack-cloud-plugin/openstack-cloud.jpi"
+
   roles:
-   - { role: williamyeh.oracle-java }
-   - { role: docker }
+#    - { role: williamyeh.oracle-java }
+#    - { role: docker }
    - { role: geerlingguy.jenkins }
 
 

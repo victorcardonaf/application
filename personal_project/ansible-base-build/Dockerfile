@@ -14,10 +14,6 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == \
   rm -f /lib/systemd/system/anaconda.target.wants/*;
 VOLUME [ "/sys/fs/cgroup" ]
 
-ADD files/test.pem /etc/ansible/test.pem
-ADD files/Proveedor_DSW.pem /etc/ansible/Proveedor_DSW.pem
-ADD files/ProveedorDSW_bastion.pem /etc/ansible/ProveedorDSW_bastion.pem
-
 RUN echo "root:viticor" | chpasswd
 
 # In case it isn't obvious, you do NOT need httpd, it is only
@@ -34,15 +30,10 @@ RUN yum -y install epel-release; yum -y install ansible; yum -y install gcc git 
 RUN cd /opt && git clone https://github.com/ansible/ansible.git --recursive  
 RUN cd /opt/ansible && make install  
 RUN yum -y install vim
+RUN pip install boto3 boto
 
 RUN echo "docker-admin-ansible" > /etc/hostname
 #ADD files/ssh_config /etc/ssh/ssh_config
-
-# Install mysql-server
-WORKDIR /opt/
-RUN wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm && rpm -ivh mysql-community-release-el7-5.noarch.rpm
-RUN yum update -y
-RUN yum install mysql-server -y 
 
 # You HAVE to enable your service PRIOR to calling "init"
 # since the init call is what ultimately fires it up
@@ -52,7 +43,8 @@ RUN systemctl enable sshd.service
 # example implementation
 EXPOSE 22
 
-VOLUME /data
+VOLUME /media
+WORKDIR /media
 
 RUN echo "alias python=/usr/local/bin/python3.7" >> /root/.bashrc && source /root/.bashrc
 

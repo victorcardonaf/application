@@ -5,16 +5,15 @@
     name: "*"
     state: latest
 
-- name: install docker
+- name: install git and docker
   become: true
   shell: |
-    yum install -y docker
+    yum install -y git docker
 
-- name: add ec2-user to docker
+- name: add users to docker and root groups
   become: true
   shell: |
     usermod -aG docker ec2-user
-    usermod -aG docker jenkins
 
 - name: enable_service
   become: yes

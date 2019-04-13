@@ -29,7 +29,7 @@ pipeline {
             }
         stage('Deploy') {
             steps {
-                    sh "docker run -d -p 3000:3000 --name alpine_timeoff victorcardonaf/test-application"
+                    sh "docker run --stop-timeout 70 --stop-signal -d -p 3000:3000 --name test-${env.BUILD_NUMBER} victorcardonaf/test-application"
                 }
                 
             }

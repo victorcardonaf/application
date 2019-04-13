@@ -16,12 +16,12 @@
     assign_public_ip: true
     vpc_subnet_id: "{{ public_subnet1.subnet.id }}"
     keypair: "{{ keypair }}"
-    group: "{{ security_group1.group_name }}"
+    group: "['{{ security_group1.group_name }}','{{ security_group2.group_name }}','{{ security_group3.group_name }}']"
     instance_type: "{{ instance_type }}"
     image: "{{ image_id }}"
     exact_count: 1
-    count_tag: { "Name":"Admin1-EC2" }
-    instance_tags: { "Name":"Admin1-EC2" }
+    count_tag: { "Name":"Jenkins" }
+    instance_tags: { "Name":"Jenkins" }
     wait: true
   register: admin1
 
@@ -40,7 +40,7 @@
   lineinfile:
     dest: "/media/inventory/hosts"
     regexp: "^(.+)$"
-    line: "{{ ec2_ip }} ansible_user=ec2-user become=true ansible_ssh_private_key_file=/media/keys/keypair.pem"
+    line: "{{ ec2_ip }} ansible_user=ec2-user become=true ansible_ssh_private_key_file={{ playbook_dir }}/keys/keypair.pem"
 
 - name: Wait 300 seconds for port 22 to become open
   wait_for:
@@ -48,22 +48,4 @@
     host: '{{ ec2_ip }}'
     delay: 10
     timeout: 300
-
-# - name: debug
-#   debug: var=admin1.tagged_instances[0].id
-
-# - name: set ec2_ip
-#   set_fact: ec2_ip={{ admin1.tagged_instances[0].public_ip }}
-
-# - name:
-#   debug: var=ec2_ip
-
-# # - name:
-#   add_host:
-#     name: "{{ ec2_ip }}"
-#     groups: created_node
-#     ansible_user: ec2_user
-#     become: true
-#     ansible_ssh_private_key_file: /media/keys/keypair.pem
-#     ec2_ip_address: "{{ ec2_ip }}"
 

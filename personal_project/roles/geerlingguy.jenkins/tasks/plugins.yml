@@ -34,6 +34,12 @@
   retries: 3
   delay: 2
 
+- name: add Jenkins user to docker and root groups
+  become: true
+  shell: |
+    usermod -aG docker jenkins
+    usermod -aG root jenkins
+
 - name: Remove first and last line from json file.
   replace:
     path: "{{ jenkins_home }}/updates/default.json"

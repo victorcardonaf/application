@@ -108,8 +108,8 @@
     vpc_id: "{{ vpc_id }}"
     rules:
      - proto: tcp
-       from_port: "8080"
-       to_port: "8080"
+       ports:
+         - "8080"
        cidr_ip: "0.0.0.0/0"
   register: security_group2
 
