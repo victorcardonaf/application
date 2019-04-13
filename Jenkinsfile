@@ -3,7 +3,6 @@ pipeline {
     environment {
         //be sure to replace "willbla" with your own Docker Hub username
         DOCKER_IMAGE_NAME = "victorcardonaf/test-application"
-        registryCredential = 'dockerhub'
     }
     stages {
         stage('Clone sources'){
@@ -22,7 +21,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'registryCredential') {
+                    docker.withRegistry('https://registry.hub.docker.com', '$dockerhub') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
