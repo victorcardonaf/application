@@ -31,7 +31,7 @@ RUN cd /opt && git clone https://github.com/ansible/ansible.git --recursive
 RUN cd /opt/ansible && make install  
 RUN yum -y install vim
 RUN pip install boto3 boto
-
+ENV ANSIBLE_HOST_KEY_CHECKING=False
 RUN echo "docker-admin-ansible" > /etc/hostname
 #ADD files/ssh_config /etc/ssh/ssh_config
 

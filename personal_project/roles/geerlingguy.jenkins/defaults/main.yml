@@ -21,6 +21,9 @@ jenkins_plugins:
   - docker-plugin
   - github-oauth
   - git
+  - job-dsl
+  - workflow-aggregator
+  - workflow-cps
 jenkins_plugins_state: present
 jenkins_plugin_updates_expiration: 86400
 jenkins_plugin_timeout: 30
