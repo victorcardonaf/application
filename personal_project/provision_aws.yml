@@ -1,18 +1,18 @@
 ---
-# - name: Provision AWS Instances
-#   become: true
-#   hosts: localhost
-#   roles:
-#     - { role: provision-vpc }
-#     - { role: provision-ec2 }
+- name: Provision AWS Instances
+  become: true
+  hosts: localhost
+  roles:
+    - { role: provision-vpc }
+    - { role: provision-ec2 }
 
 - name: Provision EC2 instance
   become: true
   hosts: jenkins
 
   roles:
-#    - { role: williamyeh.oracle-java }
-#    - { role: docker }
+   - { role: williamyeh.oracle-java }
+   - { role: docker }
    - { role: geerlingguy.jenkins }
 
 
