@@ -29,7 +29,7 @@ pipeline {
             }
         stage('Deploy') {
             steps {
-                    sh "docker run --stop-timeout 80 --stop-signal 80 -p 3000:3000 --name test-${env.BUILD_NUMBER} victorcardonaf/test-application"
+                    sh "docker run --stop-timeout 80 --stop-signal 80 -d -p 3000:3000 --name test-${env.BUILD_NUMBER} victorcardonaf/test-application"
                 }
                 
             }
